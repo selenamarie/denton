@@ -1,0 +1,42 @@
+Total entries: {{ len(content) }}
+{% if content %}
+{%
+       content = reversed(content)
+       last_user = None
+       last_day = None
+%}
+{%     for item in content %}
+{%
+           item_id = item['id']
+           proj_name = (item.get('project', {}) or {}).get('name', 'NONE')
+           user = item['user']['name']
+           dt = item['created']
+           day = datetime_filter(dt, '%A, %B %d, %Y', {})
+           item_content = item['content']
+%}
+{%         if last_day != day %}
+
+{{ day }}
+{{ '=' * len(day) }}
+{%
+               last_day = day
+               last_user = None
+%}
+{%         endif %}{%         if last_user != user %}
+
+{{ user }}
+{{ '-' * len(user) }}
+
+{%
+               last_user = user
+%}
+{%         endif %}{{ item_content }}
+
+    {{ dt|datetime('%c') }} :: {{ proj_name }}
+    http://standu.ps/status/{{ item_id }}
+
+{%     endfor %}
+{% else %}
+Light week!
+
+{% endif %}
